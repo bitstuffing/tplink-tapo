@@ -41,6 +41,366 @@ class Tapo(Local):
         self.token = response["result"]["token"] #update global token first
         return self.token #them return
 
+
+
+    def helloCloud(self):
+        body = {
+            "appName" : "TP-Link_Tapo_Android",
+            "appVer" : "2.1.2",
+            "netType" : "wifi",
+            "termID" : self.clientUUID,
+            "ospf" : "Android 7.0",
+            "locale" : "es_ES"
+        }
+        response = self.session.post(self.apiServer, json=body, verify=False).json()
+        return response
+
+    def getClockStatus(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getClockStatus",
+        					"params": {
+        						"system": {
+        							"name": "clock_status"
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getAdvanceDeviceConfigurations(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getLedStatus",
+        					"params": {
+        						"harddisk_manage": {
+        							"name": ["harddisk"],
+        							"table": ["hd_info"]
+        						},
+        						"msg_alarm": {
+        							"name": ["chn1_msg_alarm_info"]
+        						},
+        						"led": {
+        							"name": ["config"]
+        						},
+        						"record_plan": {
+        							"name": ["chn1_channel"]
+        						},
+        						"system": {
+        							"name": ["basic"]
+        						},
+        						"user_management": {
+        							"name": ["third_account"]
+        						},
+        						"wlan": {
+        							"name": ["default_ap"]
+        						},
+        						"cet": {
+        							"name": ["media_encrypt"]
+        						},
+        						"image": {
+        							"name": ["switch"]
+        						},
+        						"timing_reboot": {
+        							"name": ["reboot"]
+        						},
+        						"device_info": {
+        							"name": ["basic_info", "info"]
+        						},
+        						"network": {
+        							"name": ["wan"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getDetectionConfig(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getDetectionConfig",
+        					"params": {
+        						"motion_detection": {
+        							"name": ["motion_det"],
+        							"table": ["region_info"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getAudioConfig(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getAudioConfig",
+        					"params": {
+        						"audio_config": {
+        							"name": ["speaker", "microphone"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getRecordPlan(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getRecordPlan",
+        					"params": {
+        						"record_plan": {
+        							"name": ["chn1_channel"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def setRecordPlan(self,deviceId,enabled="on"):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method" : "setRecordPlan",
+        					"params" : {
+        						"record_plan": {
+        							"chn1_channel": {
+        								"enabled": enabled,
+                                        "monday": "[\"0000-2400:1\"]",
+                                        "tuesday": "[\"0000-2400:1\"]",
+                                        "wednesday": "[\"0000-2400:1\"]",
+                                        "thursday": "[\"0000-2400:1\"]",
+        								"friday": "[\"0000-2400:1\"]",
+        								"saturday": "[\"0000-2400:1\"]",
+        								"sunday": "[\"0000-2400:1\"]"
+        							}
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def searchDateWithVideo(self,deviceId,fromDate="20220301",toDate="20220331"):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "searchDateWithVideo",
+        					"params": {
+        						"playback": {
+        							"search_year_utility": {
+        								"channel": [0],
+                                        "start_date": fromDate,
+        								"end_date": toDate
+        							}
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+
+    def getCloudConfig(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getCloudConfig",
+        					"params": {
+        						"cloud_config": {
+        							"name": ["upgrade_info"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getMsgAlarmInfo(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getAlertConfig",
+        					"params": {
+        						"msg_alarm": {
+        							"name": ["chn1_msg_alarm_info"]
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+    def getDeviceShareListByPage(self):
+        getParams = {
+            "appName" : "TP-Link_Tapo_Android",
+            "appVer" : "2.1.2",
+            "netType" : "wifi",
+            "termID" : self.clientUUID,
+            "ospf" : "Android 7.0",
+            "locale" : "es_ES",
+            "token" : self.token
+        }
+        body = {
+            "method" : "getDeviceShareListByPage",
+            "params" : {
+                "index" : 0,
+                "limit" : 20,
+                "shareRole": "sharer",
+                "shareStatus": "ready"
+            }
+        }
+        response = self.session.post(self.apiServer, params=getParams, json=body, verify=False).json()
+        return response
+
+    def getDeviceUserInfo(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+            "method" : "getDeviceUserInfo",
+            "params" : {
+                "deviceId" : deviceId
+            }
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+
+    def getAppComponentList(self,deviceId):
+        getParams = {
+            'token': self.token
+        }
+        body = {
+        	"method": "passthrough",
+        	"params": {
+        		"deviceId": deviceId,
+        		"requestData": {
+        			"method": "multipleRequest",
+        			"params": {
+        				"requests": [{
+        					"method": "getAppComponentList",
+        					"params": {
+        						"app_component": {
+        							"name": "app_component_list"
+        						}
+        					}
+        				}]
+        			}
+        		}
+        	}
+        }
+        response = self.session.post(self.apiServer, json=body, params=getParams, verify=False).json()
+        return response
+
+
     '''
     Move coordinates
     '''
@@ -240,12 +600,12 @@ class Tapo(Local):
     Search global devices linked to your account and get the target info.
     If none is marked to seek, it gets the first one of the target type.
     '''
-    def getCamerasInfo(self,token):
+    def getCamerasInfo(self):
         devices = []
         totaldevs = 1
         while len(devices) < totaldevs:
             getParams = {
-                'token': token
+                'token': self.token
             }
 
             body = {
@@ -305,9 +665,9 @@ class Tapo(Local):
     '''
     Returns session and cookies information to be used in next connection
     '''
-    def getCameraResponse(self,deviceId,token):
+    def getCameraResponse(self,deviceId):
         params = {
-            'token': token
+            'token': self.token
         }
         body = {
             'method': 'passthrough',
@@ -317,7 +677,7 @@ class Tapo(Local):
                     'method':'do',
                     'relay': {
                         'request_relay': {
-                            'token': token,
+                            'token': self.token,
                             'version': self.version,
                             'stream_type': 0,
                             'protocol': 0,
@@ -350,12 +710,12 @@ class Tapo(Local):
     TODO: also it's able to read and write live commands, but it's not managing that
     it could be a feature request
     '''
-    def writeVideo(self,deviceId,token,targetFile='video.mp4'):
+    def writeVideo(self,deviceId,targetFile='video.mp4'):
 
         cameraResponse = None
         #first needs elb_cookie and sid cookies identifiers
         while not cameraResponse or 'elb_cookie' not in cameraResponse['result']['responseData']['result']:
-            cameraResponse = self.getCameraResponse(deviceId,token)
+            cameraResponse = self.getCameraResponse(deviceId,self.token)
 
         #next build ssl connection
         context = ssl.create_default_context()
@@ -375,7 +735,7 @@ class Tapo(Local):
                         'Host: %s:443\r\n' % self.server +
                         'Content-Type: multipart/mixed;boundary=--random-boundary--\r\n' +
                         'Content-Length: %s\r\n' % str(4*8*1024*1024) +
-                        'X-token: %s\r\n' % token +
+                        'X-token: %s\r\n' % self.token +
                         'X-Client-Model: sm-g930f\r\n' +
                         'X-Client-UUID: %s\r\n' % self.clientUUID +
                         'X-Client-SessionID: %s\r\n' % cameraResponse['result']['responseData']['result']['sid'] +
