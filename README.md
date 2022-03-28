@@ -1,4 +1,4 @@
-#TP-Link Tapo C200 opensource library
+# TP-Link Tapo C200 opensource library
 
 This implementation was made for bitstuffing.github.io to get a real
 implementation of a prove of concept, to control remotely a TP-Link Tapo C200
